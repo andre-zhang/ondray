@@ -99,6 +99,7 @@
   .thumb-wrap { position: relative; }
   .thumb { position: relative; background: #e3e3e3; border: var(--border) solid var(--black); aspect-ratio: 4 / 3; overflow: hidden; width: 100%; }
   .thumb::after { content: "Image"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #9a9a9a; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; }
+  .thumb:has(img)::after { display: none; }
   .thumb img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .pnum { position: absolute; top: -16px; left: -12px; z-index: 3; font-weight: 900; font-style: italic; font-size: 20px; border: 3px solid var(--black); padding: 3px 12px; box-shadow: 4px 4px 0 var(--black); }
@@ -296,7 +297,7 @@
     <article class="project">
       <div class="thumb-wrap">
         <span class="pnum n1">01</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><img src="images/trainbox.jpg" alt="Trainbox transit map editor screenshot" /></div>
       </div>
       <div class="ptext">
         <h3>Trainbox</h3>
@@ -325,14 +326,14 @@
       </div>
       <div class="thumb-wrap">
         <span class="pnum n2">02</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><img src="images/clasher.jpg" alt="Clasher group festival planning screenshot" /></div>
       </div>
     </article>
 
     <article class="project">
       <div class="thumb-wrap">
         <span class="pnum n3">03</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><img src="images/moments.jpg" alt="Moments travel memory map screenshot" /></div>
       </div>
       <div class="ptext">
         <h3>Moments</h3>
@@ -353,7 +354,7 @@
         <p>Visualize your transit trips based on your Presto card data. See your destinations, the paths you took, and your favourite places.</p>
         <div class="proj-cta">
           <!-- EDIT: link to this project (repo, live demo, or case study) -->
-          <a class="proj-link" href="https://example.com" target="_blank" rel="noopener">
+          <a class="proj-link" href="https://tapmap-lime.vercel.app" target="_blank" rel="noopener">
             <span class="arrow" aria-hidden="true">&#8599;</span>
             <span>View project</span>
           </a>
@@ -361,14 +362,14 @@
       </div>
       <div class="thumb-wrap">
         <span class="pnum n4">04</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><img src="images/tapmap.jpg" alt="Tapmap Presto trip visualization screenshot" /></div>
       </div>
     </article>
 
     <article class="project">
       <div class="thumb-wrap">
         <span class="pnum n5">05</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><!-- GTA Transit is paused on Vercel; drop images/gtatransit.jpg here once it's live again --></div>
       </div>
       <div class="ptext">
         <h3>GTA Transit <span class="wip">In Progress</span></h3>
@@ -389,7 +390,7 @@
         <p>Visualize traffic data at intersections across the city of Toronto. See when it's busy, what types of traffic are running, and model different scenarios.</p>
         <div class="proj-cta">
           <!-- EDIT: link to this project (repo, live demo, or case study) -->
-          <a class="proj-link" href="https://example.com" target="_blank" rel="noopener">
+          <a class="proj-link" href="https://traffic-viz-one.vercel.app" target="_blank" rel="noopener">
             <span class="arrow" aria-hidden="true">&#8599;</span>
             <span>View project</span>
           </a>
@@ -397,7 +398,7 @@
       </div>
       <div class="thumb-wrap">
         <span class="pnum n6">06</span>
-        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+        <div class="thumb"><img src="images/trafficviz.jpg" alt="TrafficViz Toronto intersection traffic map screenshot" /></div>
       </div>
     </article>
   </div>
