@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Andre Zhang</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+
+<style>
+  /* ===========================================================
+     THEME COLORS  —  change any hex value here to re-skin the site
+     =========================================================== */
+  :root {
+    --black:  #000000;
+    --white:  #ffffff;
+    --green:  #6ee787;   /* hero name + About Me banner */
+    --yellow: #ffc400;   /* location badge + project 01 */
+    --coral:  #f98d7d;   /* hero wave + project 03 */
+    --blue:   #5b5bf6;   /* Projects banner */
+    --maroon: #b83227;   /* Elsewhere banner */
+    --orange: #ff7a1a;   /* project 02 */
+    --paper:  #ffffff;   /* page background */
+
+    --border: 4px;                              /* black outline thickness */
+    --shadow: 10px 10px 0 var(--black);         /* hard offset drop shadow */
+    --bar: 96px;                                /* black left sidebar width */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Archivo', 'Arial', sans-serif;
+    color: var(--black);
+    background: var(--paper);
+    line-height: 1.5;
+    padding-left: var(--bar);
+    overflow-x: hidden;
+  }
+
+  /* --- signature black left sidebar (from the design) --- */
+  .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--bar); background: var(--black); z-index: 50; }
+  .sidebar .bar-dots { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 12px; }
+  .sidebar .bar-dots i { width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--white); display: block; }
+  .sidebar .bar-dots i:nth-child(1) { background: var(--green); }
+  .sidebar .bar-dots i:nth-child(2) { background: var(--yellow); }
+  .sidebar .bar-dots i:nth-child(3) { background: var(--coral); }
+
+  /* --- layout --- */
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); }
+  section { padding: 60px 0; position: relative; scroll-margin-top: 80px; }
+  /* About Me gets a bit more vertical air to match Projects' breathing room */
+  #about { padding: 72px 0; }
+  #about .banner { margin-bottom: 44px; }
+
+  /* colored section header banner (the design's main organizing element) */
+  .banner {
+    display: inline-block; border: var(--border) solid var(--black); box-shadow: var(--shadow);
+    padding: 10px 28px; font-style: italic; font-weight: 900;
+    font-size: clamp(26px, 4.6vw, 42px); margin-bottom: 36px;
+  }
+  .banner.blue   { background: var(--blue);   color: var(--white); }
+  .banner.green  { background: var(--green);  color: var(--black); }
+  .banner.maroon { background: var(--maroon); color: var(--white); }
+
+  /* ===========================================================
+     HERO  —  full-viewport reproduction of the Figma frame
+     =========================================================== */
+  .hero { min-height: 100vh; display: flex; position: relative; overflow: hidden; }
+  .hero-inner { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: clamp(22px, 3.4vh, 42px); padding: 48px 0; }
+
+  .name-banner { background: var(--green); border: var(--border) solid var(--black); box-shadow: var(--shadow); padding: clamp(16px, 3vw, 40px) clamp(24px, 5vw, 60px); width: 100%; }
+  .name-banner h1 { font-size: clamp(42px, 9vw, 108px); font-weight: 900; font-style: italic; letter-spacing: -1px; line-height: 0.9; }
+
+  .hero-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px; flex-wrap: wrap; }
+  .tagline { font-size: clamp(17px, 1.9vw, 22px); font-weight: 500; max-width: 800px; line-height: 1.6; }
+  .badge { background: var(--yellow); border: var(--border) solid var(--black); box-shadow: var(--shadow); padding: 10px 22px; font-size: clamp(16px, 2vw, 20px); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+
+  .wave { max-width: 560px; }
+  .wave svg { width: 100%; height: auto; display: block; }
+
+  .scroll-hint { position: absolute; bottom: 24px; right: clamp(20px, 5vw, 64px); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; display: flex; align-items: center; gap: 8px; }
+
+  /* ===========================================================
+     PROJECTS  —  vertical list, alternating image side
+     =========================================================== */
+  .project {
+    display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: center; padding: 34px 0;
+  }
+  .project + .project { border-top: 3px solid var(--black); }
+  .project.reverse { grid-template-columns: 1fr 300px; }
+  .project.reverse .ptext { text-align: right; }
+
+  /* wrapper is NOT clipped, so the corner number badge is fully visible */
+  .thumb-wrap { position: relative; }
+  .thumb { position: relative; background: #e3e3e3; border: var(--border) solid var(--black); aspect-ratio: 4 / 3; overflow: hidden; width: 100%; }
+  .thumb::after { content: "Image"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #9a9a9a; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; }
+  .thumb img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .pnum { position: absolute; top: -16px; left: -12px; z-index: 3; font-weight: 900; font-style: italic; font-size: 20px; border: 3px solid var(--black); padding: 3px 12px; box-shadow: 4px 4px 0 var(--black); }
+  .project.reverse .pnum { left: auto; right: -12px; }
+  .pnum.n1 { background: var(--yellow); }
+  .pnum.n2 { background: var(--orange); }
+  .pnum.n3 { background: var(--coral); }
+  .pnum.n4 { background: var(--green); }
+  .pnum.n5 { background: var(--blue); color: var(--white); }
+  .pnum.n6 { background: var(--maroon); color: var(--white); }
+
+  .ptext h3 { font-style: italic; font-weight: 900; font-size: clamp(28px, 4vw, 40px); line-height: 0.95; margin-bottom: 12px; }
+  /* small "In Progress" tag next to a project title */
+  .wip { display: inline-block; font-style: normal; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; vertical-align: middle; border: 2px solid var(--black); background: var(--yellow); padding: 3px 8px; margin-left: 10px; box-shadow: 2px 2px 0 var(--black); }
+  .ptext p  { font-size: 17px; max-width: 46ch; }
+  .project.reverse .ptext p { margin-left: auto; }
+
+  /* per-project link (same look as the Elsewhere links, a bit smaller) */
+  .proj-cta { margin-top: 18px; }
+  .proj-link { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--black); font-style: italic; font-weight: 800; font-size: 18px; }
+  .proj-link .arrow { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border: 3px solid var(--black); background: var(--yellow); font-style: normal; box-shadow: 3px 3px 0 var(--black); flex-shrink: 0; }
+  .proj-link:hover { text-decoration: underline; }
+
+  /* ===========================================================
+     ABOUT ME  —  2x2 grid of boxes with tagged list items
+     =========================================================== */
+  /* stretch so each row shares height: Work/Extracurriculars bottoms align,
+     Interests/Education tops (and bottoms) align */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: stretch; }
+  .about-box { border: var(--border) solid var(--black); box-shadow: var(--shadow); background: var(--white); padding: 40px 36px; display: flex; flex-direction: column; }
+  .about-box h3 { font-style: italic; font-weight: 900; font-size: 22px; margin-bottom: 28px; }
+  .about-box ul { list-style: none; display: flex; flex-direction: column; gap: 0; }
+  .about-box li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; }
+  .about-box li .txt { font-weight: 500; }
+  .about-box li .txt b { font-weight: 800; }
+  /* richer entries (Work / EC): a header row + room to write more below */
+  .about-box li.entry { flex-direction: column; align-items: stretch; gap: 12px; }
+  /* symmetric padding above and below each dashed divider between entries */
+  .about-box li.entry + li.entry { margin-top: 24px; padding-top: 24px; border-top: 2px dashed #d5d5d5; }
+  /* stacked: role tag on its own line, then company/term, then note — even rhythm */
+  .entry-head { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  /* let long role tags wrap instead of overflowing the box */
+  .entry-head .pill { white-space: normal; }
+  .entry-head .txt { line-height: 1.4; }
+  .entry-note { font-size: 14px; font-weight: 500; color: #5a5a5a; line-height: 1.6; }
+  /* compact list under Coursework / similar entries */
+  .entry-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin: 0; padding: 0; }
+  .entry-list li { display: block; font-size: 14px; font-weight: 500; color: #5a5a5a; line-height: 1.45; padding-left: 14px; position: relative; }
+  .entry-list li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; background: var(--black); }
+  .pill { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; border: 2px solid var(--black); padding: 3px 9px; white-space: nowrap; flex-shrink: 0; }
+  .p-green { background: var(--green); }
+  .p-yellow { background: var(--yellow); }
+  .p-coral { background: var(--coral); }
+  .p-blue { background: var(--blue); color: var(--white); }
+  .p-orange { background: var(--orange); }
+  .p-maroon { background: var(--maroon); color: var(--white); }
+
+  /* ===========================================================
+     WRITING  —  external link with arrow
+     =========================================================== */
+  .elsewhere-links { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+  .writing-link { display: inline-flex; align-items: center; gap: 16px; text-decoration: none; color: var(--black); font-style: italic; font-weight: 800; font-size: clamp(22px, 3.4vw, 34px); }
+  .writing-link .arrow { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border: var(--border) solid var(--black); background: var(--yellow); font-style: normal; box-shadow: 4px 4px 0 var(--black); flex-shrink: 0; }
+  .writing-link .arrow.blue { background: var(--blue); color: var(--white); }
+  .writing-link .arrow.coral { background: var(--coral); }
+  .writing-link .arrow.green { background: var(--green); }
+  .writing-link:hover { text-decoration: underline; }
+
+  footer { border-top: var(--border) solid var(--black); padding: 28px clamp(20px, 5vw, 64px); font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  /* ===========================================================
+     DECORATIVE GRAPHICS  (light flair — safe to move or delete)
+     =========================================================== */
+  .deco { position: absolute; pointer-events: none; z-index: 1; line-height: 0; }
+  .deco svg { width: 100%; height: 100%; display: block; }
+  .c-green { color: var(--green); } .c-yellow { color: var(--yellow); }
+  .c-coral { color: var(--coral); } .c-blue { color: var(--blue); }
+  .c-orange { color: var(--orange); } .c-maroon { color: var(--maroon); }
+
+  /* wavy separator strip between sections (two-tone coral + black tile).
+     To recolor: change the stroke '%23f98d7d' (coral) below. */
+  .divider {
+    width: 100%; height: 30px; display: block; margin: 6px 0;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='80'%20height='30'%20viewBox='0%200%2080%2030'%3E%3Cpath%20d='M0,15%20Q20,2%2040,15%20T80,15'%20fill='none'%20stroke='%23f98d7d'%20stroke-width='10'%20stroke-linecap='round'/%3E%3Cpath%20d='M0,15%20Q20,2%2040,15%20T80,15'%20fill='none'%20stroke='%23000'%20stroke-width='2.5'/%3E%3C/svg%3E");
+    background-repeat: repeat-x; background-position: center; background-size: 80px 30px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .float { animation: float 5.5s ease-in-out infinite; }
+    .spin  { animation: spin 22s linear infinite; transform-origin: 50% 50%; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes spin  { to { transform: rotate(360deg); } }
+  }
+
+  /* ===========================================================
+     RESPONSIVE
+     =========================================================== */
+  @media (max-width: 820px) {
+    .project, .project.reverse { grid-template-columns: 1fr; gap: 20px; }
+    .project.reverse .ptext { text-align: left; }
+    .project.reverse .ptext p { margin-left: 0; }
+    .project.reverse .pnum { left: -8px; right: auto; }
+    .about-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    :root { --bar: 26px; --shadow: 7px 7px 0 var(--black); }
+    .hero-row { flex-direction: column-reverse; align-items: flex-start; }
+    .scroll-hint { display: none; }
+    .hide-mobile { display: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- =================================================================
+     HOW TO EDIT THIS SITE
+     1. Change any text between tags. Each editable spot has an EDIT
+        note on the line above it.
+     2. Change colors in the ":root" block at the top of the styles.
+     3. PROJECTS: copy a whole "project" article block to add another;
+        toggle the "reverse" class to flip the image to the other side.
+        Numbers use pnum n1/n2/n3 (yellow/orange/coral).
+     4. ABOUT ME: each box is an "about-box"; add list items as needed.
+        Little tags use the "pill" classes (p-green, p-yellow, etc.).
+     5. To add a real project image: place an image tag inside the gray
+        ".thumb" box and it will fill the box.
+     ================================================================= -->
+
+<!-- reusable graphic shapes (hidden SVG sprite) -->
+<svg id="doodads" width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sparkle" viewBox="0 0 24 24"><path d="M12 0 C13 7 17 11 24 12 C17 13 13 17 12 24 C11 17 7 13 0 12 C7 11 11 7 12 0 Z" fill="currentColor" stroke="#000" stroke-width="1.6"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M9 0 h6 v9 h9 v6 h-9 v9 h-6 v-9 h-9 v-6 h9 Z" fill="currentColor" stroke="#000" stroke-width="1.6"/></symbol>
+  <symbol id="dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor" stroke="#000" stroke-width="2.4"/></symbol>
+  <symbol id="ring" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 1 L15 8.5 L23 9 L17 14 L19 22 L12 17.5 L5 22 L7 14 L1 9 L9 8.5 Z" fill="currentColor" stroke="#000" stroke-width="1.4"/></symbol>
+  <symbol id="zig" viewBox="0 0 60 16" preserveAspectRatio="none"><polyline points="0,14 10,2 20,14 30,2 40,14 50,2 60,14" fill="none" stroke="currentColor" stroke-width="3.4"/></symbol>
+</svg>
+
+<!-- decorative black sidebar -->
+<div class="sidebar"><div class="bar-dots"><i></i><i></i><i></i></div></div>
+
+<!-- ============================== HERO ============================== -->
+<header class="hero">
+  <span class="deco c-yellow spin hide-mobile" style="top:9%; right:8%; width:46px; height:46px;"><svg><use href="#sparkle"/></svg></span>
+  <span class="deco c-coral float"            style="top:26%; right:15%; width:30px; height:30px;"><svg><use href="#ring"/></svg></span>
+  <span class="deco c-green float hide-mobile" style="top:44%; right:9%; width:34px; height:34px;"><svg><use href="#plus"/></svg></span>
+  <span class="deco c-coral hide-mobile"       style="top:12%; left:3%;  width:22px; height:22px;"><svg><use href="#dot"/></svg></span>
+  <span class="deco c-yellow float hide-mobile" style="bottom:20%; right:24%; width:40px; height:40px;"><svg><use href="#star"/></svg></span>
+
+  <div class="wrap hero-inner">
+    <!-- EDIT: your name -->
+    <div class="name-banner"><h1 id="hero-name">Andre Zhang</h1></div>
+
+    <div class="hero-row">
+      <!-- EDIT: your intro paragraph -->
+      <p class="tagline">Hi! I'm Andre, a fourth-year student at UofT. Lately I've been getting into building cool things inspired by what I'm passionate about, and by the stuff I use every day. This is a repo of them. Check it out, and tell me what you think!</p>
+      <!-- EDIT: your location -->
+      <span class="badge">Toronto, CA</span>
+    </div>
+
+    <!-- coral transit-line graphic (from the design) -->
+    <div class="wave" aria-hidden="true">
+      <svg viewBox="0 0 640 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,72 Q80,32 160,72 T320,72 T480,72 T640,72" stroke="var(--coral)" stroke-width="18" stroke-linecap="round" />
+        <path d="M0,72 Q80,32 160,72 T320,72 T480,72 T640,72" stroke="var(--black)" stroke-width="3.5" />
+        <circle cx="44"  cy="56" r="8" fill="var(--white)" stroke="var(--black)" stroke-width="3.5"/>
+        <circle cx="152" cy="66" r="8" fill="var(--white)" stroke="var(--black)" stroke-width="3.5"/>
+        <circle cx="248" cy="98" r="8" fill="var(--white)" stroke="var(--black)" stroke-width="3.5"/>
+        <circle cx="408" cy="46" r="8" fill="var(--white)" stroke="var(--black)" stroke-width="3.5"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><span class="float">↓</span></div>
+</header>
+
+<!-- wavy separator between sections -->
+<div class="divider" aria-hidden="true"></div>
+
+<!-- ============================= PROJECTS ============================ -->
+<section id="projects">
+  <span class="deco c-blue spin hide-mobile"   style="top:6%; right:5%; width:40px; height:40px;"><svg><use href="#sparkle"/></svg></span>
+  <span class="deco c-coral float hide-mobile" style="top:30%; left:2%; width:26px; height:26px;"><svg><use href="#plus"/></svg></span>
+  <span class="deco c-orange hide-mobile"      style="top:52%; right:2.5%; width:58px; height:18px;"><svg><use href="#zig"/></svg></span>
+  <span class="deco c-green float hide-mobile" style="bottom:12%; left:3%; width:30px; height:30px;"><svg><use href="#ring"/></svg></span>
+  <span class="deco c-yellow hide-mobile"      style="bottom:20%; right:4%; width:20px; height:20px;"><svg><use href="#dot"/></svg></span>
+  <div class="wrap">
+    <span class="banner blue">Projects</span>
+
+    <!-- EDIT a project: change the title + description. Copy a whole
+         <article class="project"> block to add more. Add "reverse" to the
+         class to put the image on the right. -->
+
+    <article class="project">
+      <div class="thumb-wrap">
+        <span class="pnum n1">01</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+      <div class="ptext">
+        <h3>Trainbox</h3>
+        <p>A map-first transit diagram creator. Draw routes, place stops, export clean network diagrams, and import existing systems onto real geographies.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://trainbox-kappa.vercel.app" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <article class="project reverse">
+      <div class="ptext">
+        <h3>Clasher</h3>
+        <p>Group music festival planning. Aggregate schedules, decide who's seeing who, and create playlists directly from lineups.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://clasher-three.vercel.app" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+      <div class="thumb-wrap">
+        <span class="pnum n2">02</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="thumb-wrap">
+        <span class="pnum n3">03</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+      <div class="ptext">
+        <h3>Moments</h3>
+        <p>A log of all your memories, from trips around the world to walks in the park. A digital memory book, if you will.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://moments-virid.vercel.app" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <article class="project reverse">
+      <div class="ptext">
+        <h3>Tapmap <span class="wip">In Progress</span></h3>
+        <p>Visualize your transit trips based on your Presto card data. See your destinations, the paths you took, and your favourite places.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://example.com" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+      <div class="thumb-wrap">
+        <span class="pnum n4">04</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="thumb-wrap">
+        <span class="pnum n5">05</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+      <div class="ptext">
+        <h3>GTA Transit <span class="wip">In Progress</span></h3>
+        <p>Google Maps, but on steroids. See next trip departures, plus system-level visualizations, trip block information, vehicle statuses, and internal schedules.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://gtatransit.vercel.app" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <article class="project reverse">
+      <div class="ptext">
+        <h3>TrafficViz <span class="wip">In Progress</span></h3>
+        <p>Visualize traffic data at intersections across the city of Toronto. See when it's busy, what types of traffic are running, and model different scenarios.</p>
+        <div class="proj-cta">
+          <!-- EDIT: link to this project (repo, live demo, or case study) -->
+          <a class="proj-link" href="https://example.com" target="_blank" rel="noopener">
+            <span class="arrow" aria-hidden="true">&#8599;</span>
+            <span>View project</span>
+          </a>
+        </div>
+      </div>
+      <div class="thumb-wrap">
+        <span class="pnum n6">06</span>
+        <div class="thumb"><!-- put an image here to fill this box (see edit notes at top) --></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- wavy separator between sections -->
+<div class="divider" aria-hidden="true"></div>
+
+<!-- ============================= ABOUT ME ============================ -->
+<section id="about">
+  <span class="deco c-green float hide-mobile"  style="top:8%; right:6%; width:34px; height:34px;"><svg><use href="#plus"/></svg></span>
+  <span class="deco c-coral hide-mobile"        style="bottom:8%; left:2%; width:22px; height:22px;"><svg><use href="#dot"/></svg></span>
+  <span class="deco c-yellow spin hide-mobile"  style="top:5%; left:3%; width:34px; height:34px;"><svg><use href="#sparkle"/></svg></span>
+  <span class="deco c-blue float hide-mobile"   style="bottom:16%; right:3%; width:36px; height:36px;"><svg><use href="#star"/></svg></span>
+  <span class="deco c-coral hide-mobile"        style="top:46%; left:1.5%; width:56px; height:18px;"><svg><use href="#zig"/></svg></span>
+  <div class="wrap">
+    <span class="banner green">About Me</span>
+
+    <div class="about-grid">
+
+      <!-- EDIT: Work. Each entry = a role tag + company/term row, then a note. -->
+      <div class="about-box">
+        <h3>Work</h3>
+        <ul>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-green">Fall Associate</span> <span class="txt"><b>Boston Consulting Group</b> · Fall 2025</span></div>
+            <p class="entry-note">Sourcing transformation project for one of Canada's largest retailers. Returning as a full-time Associate in Jan 2027.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-yellow">Analyst Intern</span> <span class="txt"><b>Deloitte</b> · Winter 2025</span></div>
+            <p class="entry-note">Regulatory risk projects for financial services, including technology, workforce organization, AI deployment, and payments.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-coral">Operations Analyst</span> <span class="txt"><b>Royal Bank of Canada</b> · Fall 2024</span></div>
+            <p class="entry-note">Process execution and improvement within the Finance Shared Services team. Recipient of the Make A Difference Award.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-blue">Research Assistant</span> <span class="txt"><b>University of Toronto Scarborough Department of Management</b> · Summer 2025</span></div>
+            <p class="entry-note">Workforce strategy research under Dr. Nan Li.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- EDIT: Extracurriculars / leadership. Same role tag + org/term format. -->
+      <div class="about-box">
+        <h3>Extracurriculars</h3>
+        <ul>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-blue">Welcome Team Member</span> <span class="txt"><b>Toronto Pearson Airport</b> · Spring 2026 onwards</span></div>
+            <p class="entry-note">Welcoming passengers from around the world to Toronto, with 600+ interactions per shift.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-maroon">Outreach Director</span> <span class="txt"><b>Hart House Debating Club</b> · Spring 2024 to Spring 2025</span></div>
+            <p class="entry-note">Led the delivery of debate programming to schools and communities across Southern Ontario.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-orange">Tournaments Director</span> <span class="txt"><b>Hart House Debating Club</b> · Winter 2024 to Winter 2025</span></div>
+            <p class="entry-note">Organized some of North America's largest debate events, including the flagship university debating championships. Cumulative revenue of over $100,000.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-green">COVID Vaccination Site Team Member</span> <span class="txt"><b>Rexdale Community Health Centre</b> · Spring 2022 to Fall 2022</span></div>
+            <p class="entry-note">Delivered vaccine programs and community outreach in Northwest Toronto.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- EDIT: Interests. Each = a tag + a short note. -->
+      <div class="about-box">
+        <h3>Interests</h3>
+        <ul>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-orange">Urban Planning</span></div>
+            <p class="entry-note">Cities, public transit systems, and public infrastructure.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-yellow">Passenger Transport</span></div>
+            <p class="entry-note">Aviation, passenger railways, and transit systems. I collect farecards and maps from all around the world.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-coral">Concerts &amp; Music Festivals</span></div>
+            <p class="entry-note">EDM and radio pop. Favourite one to date has been Coldplay, 2025.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-maroon">Food</span></div>
+            <p class="entry-note">Restaurants, especially all-you-can-eat ones. Favourite place is Happy Lamb Hot Pot.</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-green">Winning Free Stuff</span></div>
+            <p class="entry-note">In the last year, I've gotten free trips to Coachella, Scotiabank Arena, Vancouver, and New York City.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- EDIT: Education. Degree, minor, coursework, certifications. -->
+      <div class="about-box">
+        <h3>Education</h3>
+        <ul>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-blue">Bachelor of Business Admin (BBA)</span> <span class="txt"><b>Specialist in Management</b></span> <span class="txt"><b>Minor in Economics</b></span></div>
+            <p class="entry-note">University of Toronto Scarborough, 2026 (pending)</p>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-yellow">Coursework</span></div>
+            <ul class="entry-list">
+              <li>Information Economics</li>
+              <li>Data Analytics</li>
+              <li>Computer Science</li>
+              <li>Artificial Intelligence</li>
+              <li>Linear Programming &amp; Optimization</li>
+              <li>Marketing</li>
+              <li>Finance &amp; Accounting</li>
+              <li>Psychology</li>
+              <li>City Studies</li>
+            </ul>
+          </li>
+          <li class="entry">
+            <div class="entry-head"><span class="pill p-green">Certifications</span></div>
+            <ul class="entry-list">
+              <li>Wharton AI for Business</li>
+              <li>Google Data Analyst</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- wavy separator between sections -->
+<div class="divider" aria-hidden="true"></div>
+
+<!-- ============================ ELSEWHERE =========================== -->
+<section id="elsewhere">
+  <span class="deco c-yellow spin hide-mobile" style="top:12%; right:8%; width:40px; height:40px;"><svg><use href="#star"/></svg></span>
+  <span class="deco c-coral float hide-mobile" style="top:22%; left:3%; width:26px; height:26px;"><svg><use href="#dot"/></svg></span>
+  <span class="deco c-green hide-mobile"       style="bottom:20%; right:5%; width:30px; height:30px;"><svg><use href="#plus"/></svg></span>
+  <span class="deco c-blue float hide-mobile"  style="bottom:26%; left:6%; width:30px; height:30px;"><svg><use href="#ring"/></svg></span>
+  <div class="wrap">
+    <span class="banner maroon">Elsewhere</span>
+    <div class="elsewhere-links">
+      <!-- EDIT: your writing / blog / substack link -->
+      <a class="writing-link" href="https://ondray.substack.com" target="_blank" rel="noopener">
+        <span class="arrow" aria-hidden="true">&#8599;</span>
+        <span>ondray.substack.com</span>
+      </a>
+      <!-- EDIT: your GitHub profile -->
+      <a class="writing-link" href="https://github.com/andre-zhang" target="_blank" rel="noopener">
+        <span class="arrow blue" aria-hidden="true">&#8599;</span>
+        <span>github.com/andre-zhang</span>
+      </a>
+      <!-- EDIT: your LinkedIn profile -->
+      <a class="writing-link" href="https://www.linkedin.com/in/ztyandre/" target="_blank" rel="noopener">
+        <span class="arrow coral" aria-hidden="true">&#8599;</span>
+        <span>linkedin.com/in/ztyandre</span>
+      </a>
+      <!-- EDIT: your email -->
+      <a class="writing-link" href="mailto:ztyandre@gmail.com">
+        <span class="arrow green" aria-hidden="true">&#8599;</span>
+        <span>ztyandre@gmail.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== FOOTER ============================= -->
+<footer>
+  <!-- EDIT: footer text -->
+  <span>© <span id="year"></span> Andre Zhang</span>
+  <span>Built with a bold idea and one HTML file.</span>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
