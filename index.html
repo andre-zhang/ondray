@@ -168,8 +168,6 @@
   .writing-link .arrow.green { background: var(--green); }
   .writing-link:hover { text-decoration: underline; }
 
-  footer { border-top: var(--border) solid var(--black); padding: 28px clamp(20px, 5vw, 64px); font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-
   /* ===========================================================
      DECORATIVE GRAPHICS  (light flair — safe to move or delete)
      =========================================================== */
@@ -286,14 +284,6 @@
       min-width: 0;
     }
     .writing-link .arrow { width: 34px; height: 34px; flex-shrink: 0; }
-
-    footer {
-      padding: 22px 14px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      font-size: 13px;
-    }
   }
   @media (max-width: 380px) {
     :root { --bar: 14px; --shadow: 4px 4px 0 var(--black); }
@@ -656,17 +646,6 @@
     </div>
   </div>
 </section>
-
-<!-- ============================== FOOTER ============================= -->
-<footer>
-  <!-- EDIT: footer text -->
-  <span>© <span id="year"></span> Andre Zhang</span>
-  <span>Built with a bold idea and one HTML file.</span>
-</footer>
-
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-</script>
 
 </body>
 </html>
